@@ -14,10 +14,27 @@ interactive agents that connect perception to action.
 
 | Section | Section | Section |
 | --- | --- | --- |
-| [Recent Papers](#recent-papers) | [Surveys and Reading Lists](#surveys-and-reading-lists) | [Benchmarks and Environments](#benchmarks-and-environments) |
-| [Foundation Models for Action](#foundation-models-for-action) | [Robot Learning](#robot-learning) | [Manipulation](#manipulation) |
-| [Navigation and Embodied AI](#navigation-and-embodied-ai) | [Locomotion](#locomotion) | [Simulation and Digital Twins](#simulation-and-digital-twins) |
-| [Datasets](#datasets) | [Tooling](#tooling) | [Contributing](#contributing) |
+| [Hottest Papers](#hottest-papers) | [Recent Papers](#recent-papers) | [Surveys and Reading Lists](#surveys-and-reading-lists) |
+| [Benchmarks and Environments](#benchmarks-and-environments) | [Foundation Models for Action](#foundation-models-for-action) | [Robot Learning](#robot-learning) |
+| [Manipulation](#manipulation) | [Navigation and Embodied AI](#navigation-and-embodied-ai) | [Locomotion](#locomotion) |
+| [Simulation and Digital Twins](#simulation-and-digital-twins) | [Datasets](#datasets) | [Tooling](#tooling) |
+| [Contributing](#contributing) |  |  |
+
+## Hottest Papers
+
+This section highlights the best recent picks from the 10-day paper window.
+It is updated automatically using a transparent heuristic based on recency and
+embodied-intelligence signals such as VLA, robot foundation models,
+manipulation, benchmarks, datasets, safety, and world models.
+
+<!-- BEGIN AUTO-GENERATED: hottest-papers -->
+Last updated: 2026-06-24 UTC
+Selected from papers published from 2026-06-15 through 2026-06-24.
+
+| Paper | Why it is hot | Published |
+| --- | --- | --- |
+| [World Value Models for Robotic Manipulation](https://arxiv.org/abs/2606.24742) | Robot learning, Manipulation | 2026-06-23 |
+<!-- END AUTO-GENERATED: hottest-papers -->
 
 ## Recent Papers
 

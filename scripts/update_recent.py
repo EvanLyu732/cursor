@@ -22,8 +22,10 @@ from pathlib import Path
 
 
 README = Path(__file__).resolve().parents[1] / "README.md"
-BEGIN_MARKER = "<!-- BEGIN AUTO-GENERATED: recent-papers -->"
-END_MARKER = "<!-- END AUTO-GENERATED: recent-papers -->"
+BEGIN_RECENT_MARKER = "<!-- BEGIN AUTO-GENERATED: recent-papers -->"
+END_RECENT_MARKER = "<!-- END AUTO-GENERATED: recent-papers -->"
+BEGIN_HOTTEST_MARKER = "<!-- BEGIN AUTO-GENERATED: hottest-papers -->"
+END_HOTTEST_MARKER = "<!-- END AUTO-GENERATED: hottest-papers -->"
 ARXIV_API = "https://export.arxiv.org/api/query"
 ATOM = {"atom": "http://www.w3.org/2005/Atom"}
 
@@ -53,6 +55,50 @@ RELEVANCE_KEYWORDS = [
     "sim-to-real",
     "simulation",
 ]
+
+HOTTEST_THEME_KEYWORDS = {
+    "Vision-language-action": [
+        "vision-language-action",
+        "vision language action",
+        "vla",
+        "action model",
+    ],
+    "Robot foundation models": [
+        "foundation model",
+        "generalist",
+        "cross-robot",
+        "cross-embodiment",
+        "policy",
+    ],
+    "Robot learning": [
+        "robot learning",
+        "imitation learning",
+        "reinforcement learning",
+        "diffusion policy",
+        "world model",
+    ],
+    "Manipulation": [
+        "manipulation",
+        "dexterous",
+        "grasp",
+        "cloth",
+        "tactile",
+    ],
+    "Benchmarks and datasets": [
+        "benchmark",
+        "dataset",
+        "evaluation",
+        "red-teaming",
+        "safety",
+    ],
+    "Embodied agents": [
+        "embodied",
+        "navigation",
+        "spatial memory",
+        "interactive",
+        "simulator",
+    ],
+}
 
 
 @dataclass(frozen=True)
@@ -190,9 +236,48 @@ def escape_link_text(value: str) -> str:
     return escape_table_cell(value).replace("[", "\\[").replace("]", "\\]")
 
 
-def format_markdown(papers: list[Paper], today: dt.date, cutoff: dt.date) -> str:
+def matched_themes(paper: Paper) -> list[str]:
+    searchable = f"{paper.title} {paper.summary}".lower()
+    themes: list[str] = []
+
+    for theme, keywords in HOTTEST_THEME_KEYWORDS.items():
+        if any(keyword in searchable for keyword in keywords):
+            themes.append(theme)
+
+    return themes
+
+
+def hotness_score(paper: Paper, today: dt.date) -> int:
+    searchable = f"{paper.title} {paper.summary}".lower()
+    title = paper.title.lower()
+    age_days = max(0, (today - paper.published).days)
+    score = max(0, 10 - age_days)
+
+    for keywords in HOTTEST_THEME_KEYWORDS.values():
+        for keyword in keywords:
+            if keyword in title:
+                score += 4
+            elif keyword in searchable:
+                score += 2
+
+    return score
+
+
+def hottest_papers(papers: list[Paper], today: dt.date, limit: int) -> list[Paper]:
+    return sorted(
+        papers,
+        key=lambda paper: (
+            hotness_score(paper, today),
+            paper.published,
+            paper.title.lower(),
+        ),
+        reverse=True,
+    )[:limit]
+
+
+def format_recent_markdown(papers: list[Paper], today: dt.date, cutoff: dt.date) -> str:
     lines = [
-        BEGIN_MARKER,
+        BEGIN_RECENT_MARKER,
         f"Last updated: {today.isoformat()} UTC",
         f"Showing papers published from {cutoff.isoformat()} through {today.isoformat()}.",
         "",
@@ -210,21 +295,57 @@ def format_markdown(papers: list[Paper], today: dt.date, cutoff: dt.date) -> str
     if not papers:
         lines.append("| No papers found in the configured 10-day window. | - | - |")
 
-    lines.append(END_MARKER)
+    lines.append(END_RECENT_MARKER)
     return "\n".join(lines)
 
 
-def update_readme(readme: Path, generated: str) -> bool:
-    content = readme.read_text(encoding="utf-8")
+def format_hottest_markdown(
+    papers: list[Paper],
+    today: dt.date,
+    cutoff: dt.date,
+    limit: int,
+) -> str:
+    lines = [
+        BEGIN_HOTTEST_MARKER,
+        f"Last updated: {today.isoformat()} UTC",
+        f"Selected from papers published from {cutoff.isoformat()} through {today.isoformat()}.",
+        "",
+        "| Paper | Why it is hot | Published |",
+        "| --- | --- | --- |",
+    ]
+
+    for paper in hottest_papers(papers, today=today, limit=limit):
+        title = escape_link_text(paper.title)
+        themes = matched_themes(paper)
+        reason = escape_table_cell(", ".join(themes[:3]) if themes else "High recent relevance")
+        lines.append(f"| [{title}]({paper.url}) | {reason} | {paper.published.isoformat()} |")
+
+    if not papers:
+        lines.append("| No papers found in the configured 10-day window. | - | - |")
+
+    lines.append(END_HOTTEST_MARKER)
+    return "\n".join(lines)
+
+
+def replace_section(content: str, begin_marker: str, end_marker: str, generated: str) -> str:
     pattern = re.compile(
-        rf"{re.escape(BEGIN_MARKER)}.*?{re.escape(END_MARKER)}",
+        rf"{re.escape(begin_marker)}.*?{re.escape(end_marker)}",
         flags=re.DOTALL,
     )
 
     if not pattern.search(content):
-        raise RuntimeError(f"could not find generated section markers in {readme}")
+        raise RuntimeError(f"could not find generated section markers: {begin_marker}")
 
-    updated = pattern.sub(generated, content)
+    return pattern.sub(generated, content)
+
+
+def update_readme(readme: Path, generated_sections: list[tuple[str, str, str]]) -> bool:
+    content = readme.read_text(encoding="utf-8")
+    updated = content
+
+    for begin_marker, end_marker, generated in generated_sections:
+        updated = replace_section(updated, begin_marker, end_marker, generated)
+
     if updated == content:
         return False
 
@@ -247,6 +368,12 @@ def main() -> int:
         help="optional maximum papers to list; 0 keeps all papers in the date window",
     )
     parser.add_argument(
+        "--hot-limit",
+        type=int,
+        default=5,
+        help="number of papers to highlight in the hottest section",
+    )
+    parser.add_argument(
         "--per-query",
         type=int,
         default=25,
@@ -264,13 +391,27 @@ def main() -> int:
         parser.error("--days must be at least 1")
     if args.limit < 0:
         parser.error("--limit must be 0 or greater")
+    if args.hot_limit < 1:
+        parser.error("--hot-limit must be at least 1")
 
     today = dt.datetime.now(dt.timezone.utc).date()
     cutoff = today - dt.timedelta(days=args.days - 1)
     limit = args.limit or None
     papers = fetch_recent_papers(cutoff=cutoff, limit=limit, per_query=args.per_query)
-    generated = format_markdown(papers, today=today, cutoff=cutoff)
-    changed = update_readme(args.readme, generated)
+    generated_recent = format_recent_markdown(papers, today=today, cutoff=cutoff)
+    generated_hottest = format_hottest_markdown(
+        papers,
+        today=today,
+        cutoff=cutoff,
+        limit=args.hot_limit,
+    )
+    changed = update_readme(
+        args.readme,
+        [
+            (BEGIN_HOTTEST_MARKER, END_HOTTEST_MARKER, generated_hottest),
+            (BEGIN_RECENT_MARKER, END_RECENT_MARKER, generated_recent),
+        ],
+    )
 
     if changed:
         print(
