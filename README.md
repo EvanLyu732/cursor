@@ -24,7 +24,8 @@ interactive agents that connect perception to action.
 This section is updated automatically every day at 08:00 UTC by
 [`scripts/update_recent.py`](scripts/update_recent.py). The updater fetches
 recent arXiv entries related to embodied intelligence, robot learning,
-embodied AI, and vision-language-action systems.
+embodied AI, and vision-language-action systems, keeping papers published in
+the last 10 days.
 
 <!-- BEGIN AUTO-GENERATED: recent-papers -->
 Last updated: 2026-06-24 UTC

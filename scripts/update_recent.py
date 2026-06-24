@@ -148,14 +148,18 @@ def is_relevant(paper: Paper) -> bool:
     return any(keyword in searchable for keyword in RELEVANCE_KEYWORDS)
 
 
-def fetch_recent_papers(limit: int, per_query: int) -> list[Paper]:
+def fetch_recent_papers(
+    cutoff: dt.date,
+    per_query: int,
+    limit: int | None = None,
+) -> list[Paper]:
     seen_urls: set[str] = set()
     papers: list[Paper] = []
 
     for term in SEARCH_TERMS:
         payload = fetch_url(arxiv_query_url(term, per_query))
         for paper in parse_feed(payload):
-            if paper.url in seen_urls or not is_relevant(paper):
+            if paper.published < cutoff or paper.url in seen_urls or not is_relevant(paper):
                 continue
             seen_urls.add(paper.url)
             papers.append(paper)
@@ -164,6 +168,8 @@ def fetch_recent_papers(limit: int, per_query: int) -> list[Paper]:
         time.sleep(3)
 
     papers.sort(key=lambda paper: (paper.published, paper.title.lower()), reverse=True)
+    if limit is None:
+        return papers
     return papers[:limit]
 
 
@@ -184,10 +190,11 @@ def escape_link_text(value: str) -> str:
     return escape_table_cell(value).replace("[", "\\[").replace("]", "\\]")
 
 
-def format_markdown(papers: list[Paper], today: dt.date) -> str:
+def format_markdown(papers: list[Paper], today: dt.date, cutoff: dt.date) -> str:
     lines = [
         BEGIN_MARKER,
         f"Last updated: {today.isoformat()} UTC",
+        f"Showing papers published from {cutoff.isoformat()} through {today.isoformat()}.",
         "",
         "| Paper | Authors | Published |",
         "| --- | --- | --- |",
@@ -201,7 +208,7 @@ def format_markdown(papers: list[Paper], today: dt.date) -> str:
         )
 
     if not papers:
-        lines.append("| No recent papers found by the configured sources. | - | - |")
+        lines.append("| No papers found in the configured 10-day window. | - | - |")
 
     lines.append(END_MARKER)
     return "\n".join(lines)
@@ -227,11 +234,22 @@ def update_readme(readme: Path, generated: str) -> bool:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--limit", type=int, default=12, help="maximum papers to list")
+    parser.add_argument(
+        "--days",
+        type=int,
+        default=10,
+        help="number of recent publication days to keep, including today",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="optional maximum papers to list; 0 keeps all papers in the date window",
+    )
     parser.add_argument(
         "--per-query",
         type=int,
-        default=8,
+        default=25,
         help="maximum arXiv results to fetch for each search term",
     )
     parser.add_argument(
@@ -242,12 +260,23 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    papers = fetch_recent_papers(limit=args.limit, per_query=args.per_query)
-    generated = format_markdown(papers, today=dt.datetime.now(dt.timezone.utc).date())
+    if args.days < 1:
+        parser.error("--days must be at least 1")
+    if args.limit < 0:
+        parser.error("--limit must be 0 or greater")
+
+    today = dt.datetime.now(dt.timezone.utc).date()
+    cutoff = today - dt.timedelta(days=args.days - 1)
+    limit = args.limit or None
+    papers = fetch_recent_papers(cutoff=cutoff, limit=limit, per_query=args.per_query)
+    generated = format_markdown(papers, today=today, cutoff=cutoff)
     changed = update_readme(args.readme, generated)
 
     if changed:
-        print(f"Updated {args.readme} with {len(papers)} recent papers.")
+        print(
+            f"Updated {args.readme} with {len(papers)} papers "
+            f"from the last {args.days} days."
+        )
     else:
         print(f"{args.readme} is already up to date.")
 
