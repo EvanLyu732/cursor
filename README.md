@@ -24,7 +24,8 @@ interactive agents that connect perception to action.
 This section highlights the best recent picks from the 10-day paper window.
 It is updated automatically using a transparent heuristic based on recency and
 embodied-intelligence signals such as VLA, robot foundation models,
-manipulation, benchmarks, datasets, safety, and world models.
+manipulation, benchmarks, datasets, safety, and world models. Link shortcuts
+search for author sites, X discussion, and Reddit discussion.
 
 <!-- BEGIN AUTO-GENERATED: hottest-papers -->
 Last updated: 2026-06-24 UTC
@@ -45,7 +46,8 @@ This section is updated automatically every day at 08:00 UTC by
 [`scripts/update_recent.py`](scripts/update_recent.py). The updater fetches
 recent arXiv entries related to embodied intelligence, robot learning,
 embodied AI, and vision-language-action systems, keeping papers published in
-the last 10 days.
+the last 10 days. Link shortcuts search for author sites, X discussion, and
+Reddit discussion.
 
 <!-- BEGIN AUTO-GENERATED: recent-papers -->
 Last updated: 2026-06-24 UTC

@@ -236,6 +236,36 @@ def escape_link_text(value: str) -> str:
     return escape_table_cell(value).replace("[", "\\[").replace("]", "\\]")
 
 
+def short_summary(paper: Paper, max_chars: int = 220) -> str:
+    summary = html.unescape(paper.summary)
+    if not summary:
+        return "No summary available from arXiv."
+
+    sentence_match = re.search(r"^(.+?[.!?])(?:\s|$)", summary)
+    candidate = sentence_match.group(1) if sentence_match else summary
+    if len(candidate) <= max_chars:
+        return candidate
+
+    truncated = candidate[: max_chars - 1].rsplit(" ", 1)[0].rstrip()
+    return f"{truncated}..."
+
+
+def search_url(base_url: str, query: str, query_param: str = "q") -> str:
+    return f"{base_url}?{urllib.parse.urlencode({query_param: query})}"
+
+
+def related_links(paper: Paper) -> str:
+    first_author = paper.authors[0] if paper.authors else "paper author"
+    author_query = f"{first_author} {paper.title} homepage"
+    discussion_query = f'"{paper.title}"'
+    links = [
+        ("author site", search_url("https://duckduckgo.com/", author_query)),
+        ("X", search_url("https://x.com/search", discussion_query)),
+        ("reddit", search_url("https://www.reddit.com/search/", discussion_query)),
+    ]
+    return " · ".join(f"[{label}]({url})" for label, url in links)
+
+
 def matched_themes(paper: Paper) -> list[str]:
     searchable = f"{paper.title} {paper.summary}".lower()
     themes: list[str] = []
@@ -281,19 +311,22 @@ def format_recent_markdown(papers: list[Paper], today: dt.date, cutoff: dt.date)
         f"Last updated: {today.isoformat()} UTC",
         f"Showing papers published from {cutoff.isoformat()} through {today.isoformat()}.",
         "",
-        "| Paper | Authors | Published |",
-        "| --- | --- | --- |",
+        "| Paper | Summary | Authors | Links | Published |",
+        "| --- | --- | --- | --- | --- |",
     ]
 
     for paper in papers:
         title = escape_link_text(paper.title)
+        summary = escape_table_cell(short_summary(paper))
         authors = escape_table_cell(format_authors(paper.authors))
+        links = related_links(paper)
         lines.append(
-            f"| [{title}]({paper.url}) | {authors} | {paper.published.isoformat()} |"
+            f"| [{title}]({paper.url}) | {summary} | {authors} | {links} | "
+            f"{paper.published.isoformat()} |"
         )
 
     if not papers:
-        lines.append("| No papers found in the configured 10-day window. | - | - |")
+        lines.append("| No papers found in the configured 10-day window. | - | - | - | - |")
 
     lines.append(END_RECENT_MARKER)
     return "\n".join(lines)
@@ -310,18 +343,23 @@ def format_hottest_markdown(
         f"Last updated: {today.isoformat()} UTC",
         f"Selected from papers published from {cutoff.isoformat()} through {today.isoformat()}.",
         "",
-        "| Paper | Why it is hot | Published |",
-        "| --- | --- | --- |",
+        "| Paper | Summary | Why it is hot | Links | Published |",
+        "| --- | --- | --- | --- | --- |",
     ]
 
     for paper in hottest_papers(papers, today=today, limit=limit):
         title = escape_link_text(paper.title)
+        summary = escape_table_cell(short_summary(paper))
         themes = matched_themes(paper)
         reason = escape_table_cell(", ".join(themes[:3]) if themes else "High recent relevance")
-        lines.append(f"| [{title}]({paper.url}) | {reason} | {paper.published.isoformat()} |")
+        links = related_links(paper)
+        lines.append(
+            f"| [{title}]({paper.url}) | {summary} | {reason} | {links} | "
+            f"{paper.published.isoformat()} |"
+        )
 
     if not papers:
-        lines.append("| No papers found in the configured 10-day window. | - | - |")
+        lines.append("| No papers found in the configured 10-day window. | - | - | - | - |")
 
     lines.append(END_HOTTEST_MARKER)
     return "\n".join(lines)
