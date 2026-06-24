@@ -31,12 +31,48 @@ Built from papers published from 2026-06-15 through 2026-06-24.
 
 ```mermaid
 graph TD
-  idea_vla_action_models["VLA / action models<br/>0 papers"]
+  idea_datasets["Datasets<br/>61 papers"]
+  idea_manipulation["Manipulation<br/>60 papers"]
+  idea_robot_foundation_models["Robot foundation models<br/>59 papers"]
+  idea_embodied_agents["Embodied agents<br/>54 papers"]
+  idea_policy_learning["Policy learning<br/>52 papers"]
+  idea_benchmarks["Benchmarks<br/>47 papers"]
+  idea_safety["Safety<br/>40 papers"]
+  idea_world_models["World models<br/>36 papers"]
+  idea_vla_action_models["VLA / action models<br/>36 papers"]
+  idea_simulation["Simulation<br/>35 papers"]
+  idea_datasets -- 39 --> idea_manipulation
+  idea_manipulation -- 36 --> idea_policy_learning
+  idea_datasets -- 34 --> idea_robot_foundation_models
+  idea_robot_foundation_models -- 34 --> idea_vla_action_models
+  idea_datasets -- 33 --> idea_policy_learning
+  idea_datasets -- 32 --> idea_embodied_agents
+  idea_benchmarks -- 30 --> idea_robot_foundation_models
+  idea_policy_learning -- 30 --> idea_robot_foundation_models
+  idea_manipulation -- 29 --> idea_robot_foundation_models
+  idea_embodied_agents -- 29 --> idea_robot_foundation_models
+  idea_benchmarks -- 28 --> idea_manipulation
+  idea_benchmarks -- 28 --> idea_embodied_agents
+  idea_embodied_agents -- 28 --> idea_manipulation
+  idea_datasets -- 27 --> idea_safety
+  idea_robot_foundation_models -- 27 --> idea_safety
+  idea_datasets -- 26 --> idea_simulation
+  idea_benchmarks -- 25 --> idea_datasets
+  idea_manipulation -- 24 --> idea_simulation
 ```
 
 | Idea | Papers |
 | --- | --- |
-| VLA / action models | 0 |
+| Datasets | 61 |
+| Manipulation | 60 |
+| Robot foundation models | 59 |
+| Embodied agents | 54 |
+| Policy learning | 52 |
+| Benchmarks | 47 |
+| Safety | 40 |
+| World models | 36 |
+| VLA / action models | 36 |
+| Simulation | 35 |
 <!-- END AUTO-GENERATED: idea-graph -->
 
 ## Hottest Papers
