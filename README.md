@@ -1,13 +1,14 @@
 # Awesome Embodied Intelligence
 
-> A curated and automatically refreshed list of resources for embodied intelligence:
-> agents that perceive, reason, learn, and act through physical or simulated bodies.
+> A daily updated awesome list for embodied intelligence, collecting papers,
+> benchmarks, datasets, simulators, models, and tools for agents that perceive,
+> reason, learn, and act through physical or simulated bodies.
 
 Website: <https://evanlyu732.github.io/cursor/>
 
-Embodied intelligence spans robot learning, embodied AI, simulation, manipulation,
-locomotion, navigation, vision-language-action models, and world models for
-interactive agents.
+Embodied intelligence spans robot learning, embodied AI, manipulation, locomotion,
+navigation, simulation, vision-language-action models, and world models for
+interactive agents that connect perception to action.
 
 ## Contents
 
