@@ -32,11 +32,18 @@ embodied AI, and vision-language-action systems.
 <!-- BEGIN AUTO-GENERATED: recent-papers -->
 Last updated: 2026-06-24 UTC
 
-- [VGGT-Long: Chunk it, Loop it, Align it -- Pushing VGGT's Limits on Kilometer-scale Long RGB Sequences](http://arxiv.org/abs/2507.16443v1) - Wencheng Han, Junbo Jiang, Keyu Xie, Zhaoliang Zhang, Jinsheng Chen, Kai Feng, Zhiwei Feng, Tao Pan, Yueqi Duan (2025-07-22)
-- [Review of Software Architectures for Autonomous Robotic Systems](http://arxiv.org/abs/2507.15648v1) - Aldrin Kay Y. Dingo, Huajie Wang, Megan J. Cordill, Darrian Collins, Nina K. McGuire (2025-07-21)
-- [Robotic Efficient Grasping of Novel Objects through Human Interaction](http://arxiv.org/abs/2507.14947v1) - Katherine Metcalf, Megan D. Twigg, Kendall Lowrey, Zachary Ferguson, Brian Scassellati (2025-07-20)
-- [StreamingVLA: Efficient Online VLA Inference with Efficient Action Cache](http://arxiv.org/abs/2507.154_streamingvla) - Auto-generated entry placeholder (2025-07-20)
-- [Track Any Motion in the Wild: A Unified Framework for Simultaneous Camera and Scene Motion Estimation](http://arxiv.org/abs/2507.15461v1) - Ruicheng Wang, Sibgha Atta, Ramanag Murthy, Qianqian Wang, Yunfu Zhang, Gengshan Yang, Deva Ramanan (2025-07-20)
+- [World Value Models for Robotic Manipulation](https://arxiv.org/abs/2606.24742) - Zhihao Wang, Jianxiong Li, Yu Cui, Yuan Gao, Xianyuan Zhan, Junzhi Yu, et al. (+1) (2026-06-23)
+- [Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos](https://arxiv.org/abs/2606.24448) - Danze Chen, Yanzhe Chen, Qiming Huang, Zhijun Cao, Chen Gao, Mike Zheng Shou (2026-06-23)
+- [SPACE: Enabling Learning from Cross-Robot Data Toward Generalist Policies](https://arxiv.org/abs/2606.24049) - Haeone Lee, Byeongguk Jeon, Suchae Jeong, Jian Kim, Kimin Lee (2026-06-23)
+- [MANGO: Automated Multi-Agent Test Oracle Generation for Vision-Language-Action Models](https://arxiv.org/abs/2606.24815) - Pablo Valle, Shaukat Ali, Aitor Arrieta, Lionel Briand (2026-06-23)
+- [InSight: Self-Guided Skill Acquisition via Steerable VLAs](https://arxiv.org/abs/2606.24884) - Maggie Wang, Lars Osterberg, Stephen Tian, Ola Shorinwa, Jiajun Wu, Mac Schwager (2026-06-23)
+- [G$^3$VLA: Geometric inductive bias for Vision-Language-Action Models](https://arxiv.org/abs/2606.24472) - Yue Peng, Yongzhe Zhao, Artur Habuda, Khuyen Pham, Yanheng Zhu, Tran Nguyen Le, et al. (+2) (2026-06-23)
+- [Enabling Robust Cloth Manipulation via Inference-Time Simulator-in-the-Loop Refinement](https://arxiv.org/abs/2606.24552) - Xin Liu, Yulin Li, Ziming Li, Pengyu Jing, Zhenhao Huang, Bingyang Zhou, et al. (+4) (2026-06-23)
+- [DriveStack-VLA: Render-Teacher Alignment for BEV-Based DeepStack Vision-Language-Action Model](https://arxiv.org/abs/2606.24051) - Jingke Wang, Zhenru Zhao, Shuangming Lei, Hao Su, Yuehao Huang, Yijia Xie, et al. (+5) (2026-06-23)
+- [Compact Object-Level Representations with Open-Vocabulary Understanding for Indoor Visual Relocalization](https://arxiv.org/abs/2606.24767) - Zhaopeng Cui, Jiarui Hu, Jingbo Liu, Boming Zhao, Xiyue Guo, Boyin Feng, et al. (+4) (2026-06-23)
+- [Beyond Monotonic Progress: Retry-Supervised Value Learning for Robot Imitation](https://arxiv.org/abs/2606.24633) - Xinyao Qin, Junjie Lu, Kaixin Wang, Chuheng Zhang, Sinjae Kang, Kimin Lee, et al. (+4) (2026-06-23)
+- [AutoSpec: Safety Rule Evolution for LLM Agents via Inductive Logic Programming](https://arxiv.org/abs/2606.24245) - Pingchuan Ma, Zhaoyu Wang, Zimo Ji, Yuguang Zhou, Zhantong Xue, Zongjie Li, et al. (+2) (2026-06-23)
+- [ArtiTwinSplat: Interactable Digital Twin Reconstruction via Gaussian Splatting from RGB-D videos](https://arxiv.org/abs/2606.24628) - Pranjal Mishra, René Zurbrügg, Max Wilder-Smith, Marco Hutter, Marc Pollefeys, Zuria Bauer, et al. (+1) (2026-06-23)
 <!-- END AUTO-GENERATED: recent-papers -->
 
 ## Surveys and Reading Lists

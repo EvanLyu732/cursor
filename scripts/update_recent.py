@@ -69,7 +69,8 @@ def normalize_whitespace(value: str) -> str:
 
 
 def strip_version(url: str) -> str:
-    return re.sub(r"v\d+$", "", url)
+    versionless = re.sub(r"v\d+$", "", url)
+    return versionless.replace("http://arxiv.org", "https://arxiv.org")
 
 
 def fetch_url(url: str, retries: int = 3) -> bytes:
@@ -232,7 +233,7 @@ def main() -> int:
     args = parser.parse_args()
 
     papers = fetch_recent_papers(limit=args.limit, per_query=args.per_query)
-    generated = format_markdown(papers, today=dt.datetime.utcnow().date())
+    generated = format_markdown(papers, today=dt.datetime.now(dt.timezone.utc).date())
     changed = update_readme(args.readme, generated)
 
     if changed:
