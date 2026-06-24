@@ -176,22 +176,32 @@ def format_authors(authors: tuple[str, ...], max_authors: int = 6) -> str:
     return f"{', '.join(authors[:max_authors])}, et al. (+{remaining})"
 
 
+def escape_table_cell(value: str) -> str:
+    return html.unescape(value).replace("|", "\\|")
+
+
+def escape_link_text(value: str) -> str:
+    return escape_table_cell(value).replace("[", "\\[").replace("]", "\\]")
+
+
 def format_markdown(papers: list[Paper], today: dt.date) -> str:
     lines = [
         BEGIN_MARKER,
         f"Last updated: {today.isoformat()} UTC",
         "",
+        "| Paper | Authors | Published |",
+        "| --- | --- | --- |",
     ]
 
     for paper in papers:
-        title = html.unescape(paper.title).replace("[", "\\[").replace("]", "\\]")
-        authors = html.unescape(format_authors(paper.authors))
+        title = escape_link_text(paper.title)
+        authors = escape_table_cell(format_authors(paper.authors))
         lines.append(
-            f"- [{title}]({paper.url}) - {authors} ({paper.published.isoformat()})"
+            f"| [{title}]({paper.url}) | {authors} | {paper.published.isoformat()} |"
         )
 
     if not papers:
-        lines.append("- No recent papers found by the configured sources.")
+        lines.append("| No recent papers found by the configured sources. | - | - |")
 
     lines.append(END_MARKER)
     return "\n".join(lines)

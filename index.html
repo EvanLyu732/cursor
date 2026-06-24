@@ -175,6 +175,31 @@
         margin: 0.35rem 0;
       }
 
+      .content table {
+        display: block;
+        width: 100%;
+        margin: 1rem 0 1.5rem;
+        border-collapse: collapse;
+        overflow-x: auto;
+      }
+
+      .content th,
+      .content td {
+        padding: 0.75rem 0.85rem;
+        border: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .content th {
+        background: #f4f7fc;
+        font-weight: 800;
+      }
+
+      .content tr:nth-child(even) td {
+        background: #fafcff;
+      }
+
       .site-footer {
         padding: 0 1.25rem 2.5rem;
         color: var(--muted);
