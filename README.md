@@ -33,7 +33,11 @@ Selected from papers published from 2026-06-15 through 2026-06-24.
 
 | Paper | Why it is hot | Published |
 | --- | --- | --- |
-| [World Value Models for Robotic Manipulation](https://arxiv.org/abs/2606.24742) | Robot learning, Manipulation | 2026-06-23 |
+| [LIBERO-Safety: A Comprehensive Benchmark for Physical and Semantic Safety in Vision-Language-Action Models](https://arxiv.org/abs/2606.23686) | Vision-language-action, Robot foundation models, Manipulation | 2026-06-22 |
+| [dVLA-RL: Reinforcement Learning over Denoising Trajectories for Discrete Diffusion Vision-Language-Action Models](https://arxiv.org/abs/2606.23623) | Vision-language-action, Robot foundation models, Robot learning | 2026-06-22 |
+| [BiliVLA: Scene-Aware Vision-Language-Action Model with Reinforcement Learning for Autonomous Biliary Endoscopic Navigation](https://arxiv.org/abs/2606.23531) | Vision-language-action, Robot foundation models, Robot learning | 2026-06-22 |
+| [IOI: Decoupling Kinematics and Physics for Interactive World Models](https://arxiv.org/abs/2606.23296) | Robot foundation models, Robot learning, Benchmarks and datasets | 2026-06-22 |
+| [PolicyTrim: Boosting Intrinsic Policy Efficiency of Vision-Language-Action Models](https://arxiv.org/abs/2606.22540) | Vision-language-action, Robot foundation models, Robot learning | 2026-06-21 |
 <!-- END AUTO-GENERATED: hottest-papers -->
 
 ## Recent Papers
