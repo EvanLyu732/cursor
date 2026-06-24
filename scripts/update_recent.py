@@ -8,8 +8,10 @@ modules so it can run in GitHub Actions without installing dependencies.
 from __future__ import annotations
 
 import argparse
+import collections
 import datetime as dt
 import html
+import itertools
 import re
 import sys
 import time
@@ -26,6 +28,8 @@ BEGIN_RECENT_MARKER = "<!-- BEGIN AUTO-GENERATED: recent-papers -->"
 END_RECENT_MARKER = "<!-- END AUTO-GENERATED: recent-papers -->"
 BEGIN_HOTTEST_MARKER = "<!-- BEGIN AUTO-GENERATED: hottest-papers -->"
 END_HOTTEST_MARKER = "<!-- END AUTO-GENERATED: hottest-papers -->"
+BEGIN_IDEA_GRAPH_MARKER = "<!-- BEGIN AUTO-GENERATED: idea-graph -->"
+END_IDEA_GRAPH_MARKER = "<!-- END AUTO-GENERATED: idea-graph -->"
 ARXIV_API = "https://export.arxiv.org/api/query"
 ATOM = {"atom": "http://www.w3.org/2005/Atom"}
 
@@ -97,6 +101,91 @@ HOTTEST_THEME_KEYWORDS = {
         "spatial memory",
         "interactive",
         "simulator",
+    ],
+}
+
+IDEA_KEYWORDS = {
+    "VLA / action models": [
+        "vision-language-action",
+        "vision language action",
+        "vla",
+        "action model",
+    ],
+    "Robot foundation models": [
+        "foundation model",
+        "generalist",
+        "large-scale",
+        "pretrained",
+        "vision-language",
+    ],
+    "Manipulation": [
+        "manipulation",
+        "grasp",
+        "cloth",
+        "bimanual",
+        "dexterous",
+    ],
+    "Policy learning": [
+        "policy",
+        "imitation learning",
+        "reinforcement learning",
+        "behavior cloning",
+        "demonstration",
+    ],
+    "World models": [
+        "world model",
+        "dynamics",
+        "prediction",
+        "imagination",
+        "latent",
+    ],
+    "Simulation": [
+        "simulation",
+        "simulator",
+        "synthetic",
+        "sim-to-real",
+        "digital twin",
+    ],
+    "Benchmarks": [
+        "benchmark",
+        "evaluation",
+        "test oracle",
+        "red-teaming",
+        "libero",
+    ],
+    "Datasets": [
+        "dataset",
+        "data",
+        "cross-robot",
+        "cross-embodiment",
+        "teleoperation",
+    ],
+    "Safety": [
+        "safety",
+        "safe",
+        "verification",
+        "constraint",
+        "robust",
+    ],
+    "Navigation": [
+        "navigation",
+        "relocalization",
+        "spatial",
+        "occupancy",
+        "driving",
+    ],
+    "Embodied agents": [
+        "embodied",
+        "agent",
+        "interactive",
+        "spatial memory",
+        "long-horizon",
+    ],
+    "Tactile / dexterity": [
+        "tactile",
+        "dexterous",
+        "hand",
+        "contact",
     ],
 }
 
@@ -266,6 +355,95 @@ def related_links(paper: Paper) -> str:
     return " · ".join(f"[{label}]({url})" for label, url in links)
 
 
+def paper_ideas(paper: Paper) -> list[str]:
+    searchable = f"{paper.title} {paper.summary}".lower()
+    ideas = [
+        idea
+        for idea, keywords in IDEA_KEYWORDS.items()
+        if any(keyword in searchable for keyword in keywords)
+    ]
+    return ideas or ["Embodied agents"]
+
+
+def mermaid_id(label: str) -> str:
+    identifier = re.sub(r"[^a-z0-9]+", "_", label.lower()).strip("_")
+    return f"idea_{identifier or 'node'}"
+
+
+def format_mermaid_label(label: str, count: int) -> str:
+    safe_label = label.replace('"', "'")
+    suffix = "paper" if count == 1 else "papers"
+    return f'{safe_label}<br/>{count} {suffix}'
+
+
+def idea_stats(papers: list[Paper]) -> tuple[collections.Counter[str], collections.Counter[tuple[str, str]]]:
+    idea_counts: collections.Counter[str] = collections.Counter()
+    edge_counts: collections.Counter[tuple[str, str]] = collections.Counter()
+
+    for paper in papers:
+        ideas = sorted(set(paper_ideas(paper)))
+        idea_counts.update(ideas)
+        for left, right in itertools.combinations(ideas, 2):
+            edge_counts[(left, right)] += 1
+
+    return idea_counts, edge_counts
+
+
+def format_idea_graph_markdown(
+    papers: list[Paper],
+    today: dt.date,
+    cutoff: dt.date,
+    idea_limit: int,
+    edge_limit: int,
+) -> str:
+    idea_counts, edge_counts = idea_stats(papers)
+    top_ideas = [idea for idea, _ in idea_counts.most_common(idea_limit)]
+    top_idea_set = set(top_ideas)
+    top_edges = [
+        (edge, count)
+        for edge, count in edge_counts.most_common()
+        if edge[0] in top_idea_set and edge[1] in top_idea_set
+    ][:edge_limit]
+
+    lines = [
+        BEGIN_IDEA_GRAPH_MARKER,
+        f"Last updated: {today.isoformat()} UTC",
+        f"Built from papers published from {cutoff.isoformat()} through {today.isoformat()}.",
+        "",
+        "```mermaid",
+        "graph TD",
+    ]
+
+    if top_ideas:
+        for idea in top_ideas:
+            lines.append(
+                f'  {mermaid_id(idea)}["{format_mermaid_label(idea, idea_counts[idea])}"]'
+            )
+
+        for (left, right), count in top_edges:
+            lines.append(f"  {mermaid_id(left)} -- {count} --> {mermaid_id(right)}")
+    else:
+        lines.append('  no_papers["No paper ideas found"]')
+
+    lines.extend(
+        [
+            "```",
+            "",
+            "| Idea | Papers |",
+            "| --- | --- |",
+        ]
+    )
+
+    if top_ideas:
+        for idea in top_ideas:
+            lines.append(f"| {escape_table_cell(idea)} | {idea_counts[idea]} |")
+    else:
+        lines.append("| No paper ideas found | 0 |")
+
+    lines.append(END_IDEA_GRAPH_MARKER)
+    return "\n".join(lines)
+
+
 def matched_themes(paper: Paper) -> list[str]:
     searchable = f"{paper.title} {paper.summary}".lower()
     themes: list[str] = []
@@ -412,6 +590,18 @@ def main() -> int:
         help="number of papers to highlight in the hottest section",
     )
     parser.add_argument(
+        "--idea-limit",
+        type=int,
+        default=10,
+        help="number of idea nodes to include in the idea graph",
+    )
+    parser.add_argument(
+        "--idea-edge-limit",
+        type=int,
+        default=18,
+        help="number of idea connections to include in the idea graph",
+    )
+    parser.add_argument(
         "--per-query",
         type=int,
         default=25,
@@ -431,6 +621,10 @@ def main() -> int:
         parser.error("--limit must be 0 or greater")
     if args.hot_limit < 1:
         parser.error("--hot-limit must be at least 1")
+    if args.idea_limit < 1:
+        parser.error("--idea-limit must be at least 1")
+    if args.idea_edge_limit < 1:
+        parser.error("--idea-edge-limit must be at least 1")
 
     today = dt.datetime.now(dt.timezone.utc).date()
     cutoff = today - dt.timedelta(days=args.days - 1)
@@ -443,9 +637,17 @@ def main() -> int:
         cutoff=cutoff,
         limit=args.hot_limit,
     )
+    generated_idea_graph = format_idea_graph_markdown(
+        papers,
+        today=today,
+        cutoff=cutoff,
+        idea_limit=args.idea_limit,
+        edge_limit=args.idea_edge_limit,
+    )
     changed = update_readme(
         args.readme,
         [
+            (BEGIN_IDEA_GRAPH_MARKER, END_IDEA_GRAPH_MARKER, generated_idea_graph),
             (BEGIN_HOTTEST_MARKER, END_HOTTEST_MARKER, generated_hottest),
             (BEGIN_RECENT_MARKER, END_RECENT_MARKER, generated_recent),
         ],

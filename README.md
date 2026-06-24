@@ -14,10 +14,30 @@ interactive agents that connect perception to action.
 
 | Hot | Latest | Core |
 | --- | --- | --- |
-| [Hot picks](#hottest-papers) | [Recent papers](#recent-papers) | [Surveys](#surveys-and-reading-lists) |
-| [Benchmarks](#benchmarks-and-environments) | [Models](#foundation-models-for-action) | [Robot learning](#robot-learning) |
-| [Manipulation](#manipulation) | [Navigation](#navigation-and-embodied-ai) | [Locomotion](#locomotion) |
-| [Simulation](#simulation-and-digital-twins) | [Datasets](#datasets) | [Tools](#tooling) |
+| [Idea graph](#paper-idea-graph) | [Hot picks](#hottest-papers) | [Recent papers](#recent-papers) |
+| [Surveys](#surveys-and-reading-lists) | [Benchmarks](#benchmarks-and-environments) | [Models](#foundation-models-for-action) |
+| [Robot learning](#robot-learning) | [Manipulation](#manipulation) | [Navigation](#navigation-and-embodied-ai) |
+| [Locomotion](#locomotion) | [Simulation](#simulation-and-digital-twins) | [Datasets](#datasets) |
+| [Tools](#tooling) |  |  |
+
+## Paper Idea Graph
+
+This section extracts core ideas from recent paper titles and arXiv summaries,
+then connects ideas that appear together in the same papers.
+
+<!-- BEGIN AUTO-GENERATED: idea-graph -->
+Last updated: 2026-06-24 UTC
+Built from papers published from 2026-06-15 through 2026-06-24.
+
+```mermaid
+graph TD
+  idea_vla_action_models["VLA / action models<br/>0 papers"]
+```
+
+| Idea | Papers |
+| --- | --- |
+| VLA / action models | 0 |
+<!-- END AUTO-GENERATED: idea-graph -->
 
 ## Hottest Papers
 
