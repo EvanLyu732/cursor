@@ -12,13 +12,12 @@ interactive agents that connect perception to action.
 
 ## Contents
 
-| Section | Section | Section |
+| Hot | Latest | Core |
 | --- | --- | --- |
-| [Hottest Papers](#hottest-papers) | [Recent Papers](#recent-papers) | [Surveys and Reading Lists](#surveys-and-reading-lists) |
-| [Benchmarks and Environments](#benchmarks-and-environments) | [Foundation Models for Action](#foundation-models-for-action) | [Robot Learning](#robot-learning) |
-| [Manipulation](#manipulation) | [Navigation and Embodied AI](#navigation-and-embodied-ai) | [Locomotion](#locomotion) |
-| [Simulation and Digital Twins](#simulation-and-digital-twins) | [Datasets](#datasets) | [Tooling](#tooling) |
-| [Contributing](#contributing) |  |  |
+| [Hot picks](#hottest-papers) | [Recent papers](#recent-papers) | [Surveys](#surveys-and-reading-lists) |
+| [Benchmarks](#benchmarks-and-environments) | [Models](#foundation-models-for-action) | [Robot learning](#robot-learning) |
+| [Manipulation](#manipulation) | [Navigation](#navigation-and-embodied-ai) | [Locomotion](#locomotion) |
+| [Simulation](#simulation-and-digital-twins) | [Datasets](#datasets) | [Tools](#tooling) |
 
 ## Hottest Papers
 
